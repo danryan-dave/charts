@@ -72,6 +72,22 @@ So a single PR touching `charts/common` and `charts/job` releases both charts,
 independently, at their own version numbers, even though the header carries one
 scope.
 
+### Sweeping changes
+
+The flip side is that on a PR touching a file in *every* chart directory, the
+commit type decides whether every chart gets released. Adding a shared file, a
+repo-wide lint fix, or a bulk rename under `charts/` will bump all of them if the
+title says `feat` or `fix`.
+
+Use `chore` or `refactor` for that kind of change unless you genuinely want every
+chart to get a new version. Reviewers should watch for this: the diff looks
+harmless, and the damage is a pile of releases nobody asked for, each one a new
+version consumers have to reason about.
+
+If a sweeping change really does need to ship with a chart-affecting type, split
+it: one `chore` PR for the mechanical part, one scoped PR per chart that needs a
+release.
+
 On every push to `master` the release workflow walks every chart and, for each:
 
 1. works out the next version from the commits touching that chart since its last
