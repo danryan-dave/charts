@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/danryan-dave/charts/compare/kyverno-policies-0.1.2...kyverno-policies-0.1.3) (2026-08-14)
+
+
+### Bug Fixes
+
+* **kyverno-policies:** validate the release pipeline end to end ([#8](https://github.com/danryan-dave/charts/issues/8)) ([b65e2a4](https://github.com/danryan-dave/charts/commit/b65e2a4a051dd4b18204a6255a41640fd100fcbb))
+
 ## [0.1.2](https://github.com/danryan-dave/charts/compare/kyverno-policies-0.1.1...kyverno-policies-0.1.2) (2026-08-14)
 
 
