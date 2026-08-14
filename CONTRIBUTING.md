@@ -134,3 +134,5 @@ make schemas
 
 `helm lint` regenerates and fails on any remaining difference, so a stale schema
 cannot reach a release either way.
+
+<!-- ruleset validation, revert -->
