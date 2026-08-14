@@ -157,3 +157,5 @@ policySets:
   # dev:
   #   enabled: true
   #   validationFailureAction: enforce
+
+# Release pipeline validation. Safe to revert.
