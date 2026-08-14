@@ -1,14 +1,23 @@
-<!-- **PR Name format example**
-[SRE-18] - Description
+## Jira
 
-Where SRE is replaced with the appropriate JIRA project prefix and the 18 is the ticket number.
+<!--
+Required. SOC-CI looks up this ticket in Jira and fails if it does not exist or
+is already Done. Keep it here rather than in the PR title, so the title stays a
+clean Conventional Commit.
 -->
 
-**Ticket**
-[DAVE-1](https://demoforthedaves.atlassian.net/browse/DAVE-1)
+https://demoforthedaves.atlassian.net/browse/<PROJECT>-<NUMBER>
 
-**Ticket and brief summary**
+## What changed
 
-**How did you test your code?**
+<!--
+The PR title becomes the squash commit message and drives the release, so it
+must be `type(scope): subject` with a chart name as the scope.
 
-**How will you confirm this change is working once it's deployed?**
+Charts are released based on the files you touched, not the scope, so a PR
+touching two charts releases both.
+-->
+
+## Testing
+
+<!-- How this was verified. `helm template` output, a dry-run, a preview env. -->

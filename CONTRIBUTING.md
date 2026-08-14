@@ -11,19 +11,21 @@ npm ci
 
 `npm ci` installs the git hooks via lefthook. Do it once per clone.
 
-## Branch names
+## Jira tickets
 
-The Jira ticket lives in the branch name, not in the commit message:
+Put the ticket in the **PR description**, not the title. The PR template has a
+field for it.
 
-```
-feature/SRE-7229-add-node-selector
-fix/BEI-2101-rproxy-topology-skew
-```
+SOC-CI accepts a ticket in either the PR title or the PR body, so using the body
+keeps the title a clean Conventional Commit with nothing extra to strip out.
 
-Pattern: `(feature|fix|chore|hotfix)/TICKET-123-short-description`.
+SOC-CI does more than pattern-match. It looks the ticket up in Jira and fails if
+the ticket does not exist or is already in a Done status, so a made-up reference
+like `ABC-1` will not pass. It scans for `PROJECT-123` shaped references and
+passes as soon as one of them resolves to a valid open ticket.
 
-This is checked locally on push and in CI by `lint-branch-name`. Keeping the
-ticket here is what lets the commit header stay a clean Conventional Commit.
+SOC-CI never looks at the branch name, so branch naming is yours to choose.
+Something like `SRE-7229-add-node-selector` is still a courtesy to reviewers.
 
 ## Commit and PR titles
 
@@ -49,7 +51,8 @@ fix(gatewayapi): correct sectionName rendering for wildcard hosts
 feat(job)!: drop support for the legacy schedule field
 ```
 
-Do not put the ticket in the header. `[BEI-2101]: add policy` is rejected.
+Do not put the ticket in the header. `[BEI-2101]: add policy` is rejected by
+commitlint, and it is not needed: SOC-CI reads the ticket from the PR body.
 
 **The PR title is what counts.** PRs are squash merged, so the PR title becomes
 the commit message that semantic-release reads. Local hooks check your individual

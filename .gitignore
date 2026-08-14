@@ -8,5 +8,6 @@ node_modules/
 .cr-index/
 *.tgz
 
-# `helm dependency update` output, vendored at build time
+# `helm dependency update` output, regenerated at build time
 charts/*/charts/
+charts/*/Chart.lock

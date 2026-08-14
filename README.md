@@ -2,7 +2,8 @@
 Collection of common sub charts to bootstrap common applications
 
 ## Prereq
-1. Helm 3.14
+1. Helm 4.2 (CI pins the version in `.github/workflows/release.yml`)
+2. Node 24, via `nvm use` (`.nvmrc`), then `npm ci` to install the git hooks
 
 ## To develop locally
 
