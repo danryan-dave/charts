@@ -21,6 +21,9 @@ spec:
 {{- if not (or .Values.autoscaling.enabled .Values.kedaScaling.enabled) }}
   replicas: {{ .Values.replicaCount }}
 {{- end }}
+{{- if .Values.revisionHistoryLimit }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+{{- end }}
   selector:
     matchLabels:
     {{- if not .Values.podSelectorLabelsOverride }}

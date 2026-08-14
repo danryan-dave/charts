@@ -413,6 +413,11 @@ strategy:
     maxUnavailable: 25%
   type: RollingUpdate
 
+# How many old ReplicaSets to keep for rollbacks. Unset leaves the Kubernetes
+# default of 10. Lower it on services that deploy many times a day, where the
+# retained ReplicaSets are noise rather than a rollback target.
+revisionHistoryLimit:
+
 # Seconds a new Pod must stay Ready before it counts as Available and the rollout
 # retires an old Pod. Unlike maxUnavailable, this delay does not trust the readiness
 # signal. Two separate things want it, and only the first is about load balancers.
