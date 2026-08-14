@@ -28,7 +28,30 @@ jobs:
       # cr upload creates GitHub Releases, cr index pushes to gh-pages.
       contents: write
     steps:
+      # The `secrets` context is not available to a step-level `if`, so the
+      # presence of the key is turned into a plain output first. Passing the key
+      # through job-level `env` would work too, but would put it in the
+      # environment of every step in the job rather than just the one below.
+      - name: Check for Twingate configuration
+        id: twingate
+        env:
+          SERVICE_KEY: ${{ secrets.TWINGATE_SERVICE_KEY }}
+        run: |
+          if [ -n "$SERVICE_KEY" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Twingate skipped::TWINGATE_SERVICE_KEY is not set"
+          fi
+
+      # Nothing in this job is known to need private network access: cr talks to
+      # api.github.com, the push goes to github.com, and helm dependency update
+      # reaches public chart repos. The step is kept because it predates this
+      # workflow rewrite and its original purpose is unconfirmed, but it no
+      # longer fails the release when the key is absent, which also lets the
+      # workflow run on a fork.
       - name: Connect to Twingate
+        if: steps.twingate.outputs.enabled == 'true'
         uses: twingate/github-action@a8e6c2471f32650531a4683f45e485a2e97e048c # v1.5
         with:
           service-key: ${{ secrets.TWINGATE_SERVICE_KEY }}
