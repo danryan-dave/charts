@@ -3,6 +3,21 @@
 `releaserc.base.json` holds the shared semantic-release config. Each chart's
 `.releaserc.json` extends it and supplies only its own `tagFormat`.
 
+`prepare-chart.sh` is the `prepare` step for a single chart: vendor subcharts,
+regenerate `values.schema.json` from `schemas/`, write the new version into
+`Chart.yaml`, lint, and package. It lives in a script rather than inline in the
+config so it can be read and run on its own:
+
+```sh
+cd charts/common && ../../tools/prepare-chart.sh 9.9.9
+```
+
+Regenerating the schema during release closes a gap: `json_schema_bundler.yml`
+validates the bundle on PRs but its commit step was disabled, so a chart could
+ship a `values.schema.json` that no longer matched its `schemas/` sources. All
+seven schema charts currently regenerate byte-identically, so this is a no-op
+today and a guard from here on.
+
 `semantic-release-path-filter.mjs` decides which commits belong to the chart
 being released. It wraps `@semantic-release/commit-analyzer` and
 `@semantic-release/release-notes-generator`, passing them only the commits that

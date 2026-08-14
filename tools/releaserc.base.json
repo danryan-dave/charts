@@ -6,15 +6,15 @@
     [
       "@semantic-release/exec",
       {
-        "verifyConditionsCmd": "{ helm version --short && yq --version && cr version; } 1>&2",
-        "prepareCmd": "{ helm dependency update . && yq -i '.version = \"${nextRelease.version}\"' Chart.yaml && helm lint . && helm package . -d ./.cr-release-packages; } 1>&2",
+        "verifyConditionsCmd": "{ helm version --short && yq --version && jq --version && cr version; } 1>&2",
+        "prepareCmd": "../../tools/prepare-chart.sh \"${nextRelease.version}\" 1>&2",
         "publishCmd": "{ cr upload -o \"$GITHUB_REPOSITORY_OWNER\" -r \"$GITHUB_REPOSITORY_NAME\" -p ./.cr-release-packages --skip-existing --make-release-latest=false --token \"$CR_TOKEN\" && cr index -o \"$GITHUB_REPOSITORY_OWNER\" -r \"$GITHUB_REPOSITORY_NAME\" -p ./.cr-release-packages --push --token \"$CR_TOKEN\"; } 1>&2"
       }
     ],
     [
       "@semantic-release/git",
       {
-        "assets": ["Chart.yaml", "CHANGELOG.md"],
+        "assets": ["Chart.yaml", "CHANGELOG.md", "values.schema.json"],
         "message": "chore(release): ${nextRelease.gitTag} [skip ci]"
       }
     ]

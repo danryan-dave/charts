@@ -31,10 +31,10 @@ dependencies:
 
 ## Validations through JSON schema
 
-> [!WARNING]
-> As it is right now, the `json_schema_bundler.yml` workflow is unable to push commits by itself
->
-> Reach out to SRE if you need to update the `values.schema.json` file
+> [!NOTE]
+> `values.schema.json` is generated from `schemas/`. The release pipeline
+> regenerates and commits it, so you do not need to update it by hand or ask SRE.
+> Editing it directly will be overwritten on the next release of that chart.
 
 We use JSON schema to validate our custom charts. To enable that feature a `values.schema.json` file at the root directory for a given chart must be present. e.g. `charts/common/values.schema.json`.
 

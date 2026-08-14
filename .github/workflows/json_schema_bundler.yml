@@ -43,11 +43,9 @@ jobs:
           helm lint .
           popd
         done
-    # This step was disabled on purpose until we are able to make it work under Twingate access
-    - name: Commit and push json schema bundle
-      if: false
-      uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5.2.0
-      with:
-        commit_message: Automated json schema bundle update for values.schema.json
-        file_pattern: >-
-          **/values.schema.json
+    # This job validates only. It used to try to commit the regenerated bundle
+    # back to the PR, which was disabled and never re-enabled, so charts could
+    # ship a values.schema.json that no longer matched schemas/.
+    #
+    # tools/prepare-chart.sh now regenerates it during the release, so the
+    # published chart always carries a schema built from that commit's sources.
