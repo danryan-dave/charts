@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/danryan-dave/charts/compare/kyverno-policies-0.1.3...kyverno-policies-0.1.4) (2026-08-14)
+
+
+### Bug Fixes
+
+* **kyverno-policies:** validate index generation ([#10](https://github.com/danryan-dave/charts/issues/10)) ([e23e4a0](https://github.com/danryan-dave/charts/commit/e23e4a078a0c80f60f2cf4b4b2507dbc5e1de8eb))
+
 ## [0.1.3](https://github.com/danryan-dave/charts/compare/kyverno-policies-0.1.2...kyverno-policies-0.1.3) (2026-08-14)
 
 
