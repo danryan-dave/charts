@@ -1,0 +1,26 @@
+{
+  "branches": ["master"],
+  "tagFormat": "gateway-bundle-${version}",
+  "plugins": [
+    [
+      "../../tools/semantic-release-path-filter.mjs",
+      { "chartPath": "charts/gateway-bundle" }
+    ],
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/exec",
+      {
+        "verifyConditionsCmd": "helm version --short && yq --version && cr version",
+        "prepareCmd": "yq -i '.version = \"${nextRelease.version}\"' Chart.yaml && helm package . -d ./.cr-release-packages",
+        "publishCmd": "cr upload -o ${env.GITHUB_REPOSITORY_OWNER} -r ${env.GITHUB_REPOSITORY_NAME} -p ./.cr-release-packages --skip-existing --make-release-latest=false --token \"${env.CR_TOKEN}\" && cr index -o ${env.GITHUB_REPOSITORY_OWNER} -r ${env.GITHUB_REPOSITORY_NAME} -p ./.cr-release-packages --push --token \"${env.CR_TOKEN}\""
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["Chart.yaml", "CHANGELOG.md"],
+        "message": "chore(release): gateway-bundle ${nextRelease.version} [skip ci]"
+      }
+    ]
+  ]
+}

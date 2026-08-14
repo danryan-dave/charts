@@ -1,0 +1,22 @@
+{
+  "name": "dave-charts-release-tooling",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Release tooling for the Dave Helm chart monorepo. Not a published package.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "prepare": "lefthook install",
+    "commitlint": "commitlint"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^20.1.0",
+    "@commitlint/config-conventional": "^20.0.0",
+    "@semantic-release/changelog": "^7.0.0",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/exec": "^7.1.0",
+    "@semantic-release/git": "^11.0.1",
+    "@semantic-release/release-notes-generator": "^14.1.1",
+    "lefthook": "^1.14.6",
+    "semantic-release": "^25.0.9"
+  }
+}

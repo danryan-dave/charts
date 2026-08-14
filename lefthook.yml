@@ -1,0 +1,19 @@
+commit-msg:
+  commands:
+    commitlint:
+      run: npx --no -- commitlint --edit {1}
+
+pre-push:
+  commands:
+    branch-name:
+      # SOC-CI requires a Jira ticket. Enforcing it on the branch name keeps it
+      # out of the conventional-commit header.
+      run: |
+        branch="$(git rev-parse --abbrev-ref HEAD)"
+        case "$branch" in
+          master|main) exit 0 ;;
+        esac
+        if ! printf '%s' "$branch" | grep -Eq '^(feature|fix|chore|hotfix)/[A-Z][A-Z0-9]+-[0-9]+-'; then
+          echo "Branch '$branch' must look like feature/JIRA-123-short-description" >&2
+          exit 1
+        fi

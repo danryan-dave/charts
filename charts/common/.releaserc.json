@@ -1,0 +1,4 @@
+{
+  "extends": "../../tools/releaserc.base.json",
+  "tagFormat": "common-${version}"
+}

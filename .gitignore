@@ -1,3 +1,12 @@
 .vscode
 .idea
 .DS_Store
+
+# release tooling
+node_modules/
+.cr-release-packages/
+.cr-index/
+*.tgz
+
+# `helm dependency update` output, vendored at build time
+charts/*/charts/
