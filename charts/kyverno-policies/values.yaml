@@ -161,3 +161,5 @@ policySets:
 # Release pipeline validation. Safe to revert.
 
 # Second validation pass. Safe to revert.
+
+# App token fallback validation. Safe to revert.
