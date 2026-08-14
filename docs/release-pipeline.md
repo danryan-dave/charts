@@ -5,34 +5,53 @@ pipeline depends on to work correctly.
 
 ## Moving parts
 
-Three workflows split the job, and none does another's work.
+Two workflows split the job, and neither does the other's work.
 
 `schemas.yml` keeps generated files current. When a PR touches a chart's
 `schemas/` directory it rebuilds that chart's `values.schema.json` and pushes the
 result to the PR branch. `helm lint` regenerates and fails on any leftover
 difference, which covers fork PRs that this workflow cannot push to.
 
-`release-please.yml` decides versions. On every push to `master` it opens or
+`release.yml` does versioning and publishing in two jobs, in that order, so there
+is no race between them.
+
+The `release-please` job decides versions. On every push to `master` it opens or
 updates a single PR that bumps `version` in each changed chart's `Chart.yaml`,
 writes that chart's `CHANGELOG.md`, and records the new version in
-`.release-please-manifest.json`. It does not tag and does not publish, because
-`skip-github-release` is set in `release-please-config.json`.
+`.release-please-manifest.json`. When that PR is merged, the same job creates the
+tag and the GitHub Release, using the per-release changelog as the release body.
 
-`release.yml` publishes. Merging the release PR lands the version bumps on
-`master`, which runs chart-releaser: it packages any chart whose `Chart.yaml`
-version has no matching tag, tags it, creates the GitHub Release, and updates
-`index.yaml` on `gh-pages`. This is unchanged from how the repo worked when
-versions were edited by hand.
+The `publish` job runs only when the first job actually released something. It
+packages those charts, attaches each `.tgz` to the release release-please just
+created, and regenerates `index.yaml` on `gh-pages`.
 
-The two are coupled in one non-obvious way. release-please works out "what did I
-last release" from the GitHub Releases that chart-releaser creates, cross-checked
-against `.release-please-manifest.json`. If the Releases are missing, release-please
-scans too far back and proposes versions that include already-released commits.
+release-please owns the release object, and chart-releaser is reduced to packaging
+and indexing. That division is why the publish job drives `cr` by hand instead of
+using the chart-releaser action's normal path, which runs `cr upload` and would
+replace the changelog body with the chart description.
+
+Neither documented way of suppressing that is usable, and the second is the reason
+this is written out rather than configured:
+
+- `skip_upload` makes `cr.sh` return early from `update_index()`, so `index.yaml`
+  is never pushed and nothing is installable.
+- `skip_existing` is a bare `continue` placed before the asset upload. The release
+  keeps its notes and never receives its `.tgz`. Because `cr index` builds entries
+  by reading each release's assets, the chart is then absent from `index.yaml`
+  while its release page looks perfectly correct.
+
+The jobs are coupled in one non-obvious way. release-please works out "what did I
+last release" from the GitHub Releases, cross-checked against
+`.release-please-manifest.json`. If the Releases are missing, release-please scans
+too far back and proposes versions that include already-released commits.
 
 ## Repository settings this depends on
 
 These are not cosmetic. Each one is load-bearing, and the failure mode for most of
 them is silence rather than an error.
+
+This section explains why. [repo-setup.md](repo-setup.md) is the checklist for
+applying them, written for whoever holds admin on the repo.
 
 ### Squash merging only
 
@@ -71,14 +90,29 @@ the point.
   quietly stops releasing until someone notices.
 - `lint`, so charts are linted and the release config is checked for drift.
 
-### `AUTOMATION_TOKEN`
+Making `lint` required means bot pushes must come from `AUTOMATION_TOKEN`, for the
+reason in the next section.
 
-A single PAT or GitHub App token, used by both `release-please.yml` and
-`schemas.yml`. Both fall back to `GITHUB_TOKEN`, so the pipeline runs without it,
-but degrades in ways worth understanding.
+### Let Actions create pull requests, or configure `AUTOMATION_TOKEN`
 
-GitHub deliberately does not start workflow runs from pushes or PRs made with
-`GITHUB_TOKEN`, to stop workflows triggering themselves. Two consequences:
+One of these is **required**, not optional. Without either, release-please fails
+outright with:
+
+```
+GitHub Actions is not permitted to create or approve pull requests.
+```
+
+`GITHUB_TOKEN` cannot open a PR unless the repository or organization enables
+*Allow GitHub Actions to create and approve pull requests*. That setting is off by
+default. Note the API field is `can_approve_pull_request_reviews`, which is
+misleadingly named: it gates creating PRs too, not just approving them.
+
+The alternative is `AUTOMATION_TOKEN`, a PAT or GitHub App token, which is not
+subject to that restriction. `release.yml` and `schemas.yml` both read it
+and fall back to `GITHUB_TOKEN`.
+
+Even with the setting enabled, `AUTOMATION_TOKEN` is worth having, because GitHub
+does not start workflow runs from pushes or PRs made with `GITHUB_TOKEN`:
 
 - The release PR gets no `lint` run. `SOC-CI` and `Codeowners Enforcement` are
   dispatched from other repositories, so they still report and the PR stays
@@ -87,8 +121,7 @@ GitHub deliberately does not start workflow runs from pushes or PRs made with
   commit. If `lint` is a required check, its result sits on the previous commit
   and the PR cannot be merged until something else pushes.
 
-The second is the one that bites. Configure `AUTOMATION_TOKEN` if you make `lint`
-required.
+The second is the one that bites.
 
 ## Bootstrapping
 
