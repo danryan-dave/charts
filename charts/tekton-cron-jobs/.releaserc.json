@@ -1,4 +1,0 @@
-{
-  "extends": "../../tools/releaserc.base.json",
-  "tagFormat": "tekton-cron-jobs-${version}"
-}

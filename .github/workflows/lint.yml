@@ -30,6 +30,18 @@ jobs:
         run: |
           set -uo pipefail
           rc=0
+
+          # A chart deleted upstream while a branch adds a release config leaves
+          # a directory holding only .releaserc.json. It looks like a chart to
+          # the release loop but has no Chart.yaml to package.
+          for cfg in charts/*/.releaserc.json; do
+            dir="$(dirname "$cfg")"
+            if [ ! -f "${dir}/Chart.yaml" ]; then
+              echo "::error title=Orphaned release config::${cfg} has no sibling Chart.yaml"
+              rc=1
+            fi
+          done
+
           for dir in charts/*/; do
             chart="$(basename "$dir")"
             cfg="${dir}.releaserc.json"
