@@ -5,7 +5,12 @@ Collection of common sub charts to bootstrap common applications
 1. Helm 3.14
 
 ## To develop locally
-1. Choose chart you wish to update. For example `common`. Update `charts/common/Chart.yaml` version to whatever semver you plan on with a suffix of the jira ticket. For example, `1.0.0-bei-719`
+
+> [!IMPORTANT]
+> Do not edit the `version` in `Chart.yaml`. Versions are derived from commit
+> messages and written by the release workflow. See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+1. Choose chart you wish to update. For example `common`. Note its current `charts/common/Chart.yaml` version.
 2. In the sre repo cd into the directory of the chart you wish to test. For example `notification-service`
 3. With your current directory of charts/notification-service/production update the Chart.yaml file to point to the local file system path and the updated version you chose in step 1. Below shows an example `sre/charts/notification-service/production/Chart.yaml`
 
@@ -58,9 +63,18 @@ That should be enough to get you started with JSON schema validations.
 Remember that `values.schema.json` is a generated file and should not be committed to the repo. The bundler will take care of that for you when the workflow runs.
 
 ## To beta test your changes from a feature branch
-1. Create a PR
-2. Manually run the GHA workflow described in `release.yaml`. This will publish the charts as artifacts in GHA. You then should be able to use them like you did under the development section except pointing repository to the `https://dave-inc.github.io/charts` instead of `file://`
+
+Publishing a beta from a branch is no longer supported. `master` produces stable
+versions only. Test against a local path as described above, or ask SRE in
+#sre-support if you need a published prerelease.
 
 ## To create release
-1. Remove the jira suffix from the version and get approvals from #sre-support
-2. Merge to master. This should automatically trigger the `release workflow`
+
+Merge to `master` with a Conventional Commit PR title. The release workflow works
+out each chart's next version from the commits touching it, then tags, packages,
+publishes and updates the Helm repo index.
+
+There is no version to bump and no approval step in the chart repo itself.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for commit format, branch naming, and how
+to add a new chart.

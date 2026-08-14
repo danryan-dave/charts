@@ -1,0 +1,39 @@
+name: Lint PR Title
+
+# The PR title becomes the squash commit message, which is what semantic-release
+# reads. Local commit hooks cannot enforce it, because the title is set in the
+# GitHub UI at merge time.
+on:
+  pull_request:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-pr-title-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lint-pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install commitlint
+        run: npm ci
+
+      # PR_TITLE is passed through the environment, never interpolated into the
+      # script body. A ${{ }} expression inside run: is substituted before the
+      # shell sees it, so a title containing shell metacharacters would execute.
+      - name: Lint PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s\n' "$PR_TITLE" | npx --no -- commitlint
