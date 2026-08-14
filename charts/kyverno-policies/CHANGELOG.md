@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/danryan-dave/charts/compare/kyverno-policies-0.1.4...kyverno-policies-0.1.5) (2026-08-14)
+
+
+### Bug Fixes
+
+* **kyverno-policies:** validate app token fallback ([#12](https://github.com/danryan-dave/charts/issues/12)) ([191f1bd](https://github.com/danryan-dave/charts/commit/191f1bda7294a38e3c7bf3f0c2a037b81ef58f84))
+
 ## [0.1.4](https://github.com/danryan-dave/charts/compare/kyverno-policies-0.1.3...kyverno-policies-0.1.4) (2026-08-14)
 
 
