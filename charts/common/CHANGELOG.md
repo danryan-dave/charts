@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/danryan-dave/charts/compare/common-0.12.0...common-0.13.0) (2026-08-14)
+
+
+### Features
+
+* **common:** make revisionHistoryLimit configurable [SRE-7413] ([#15](https://github.com/danryan-dave/charts/issues/15)) ([718da44](https://github.com/danryan-dave/charts/commit/718da4487da65ddb2afda33ee051cb9e623e150d))
+
 ## [0.12.0](https://github.com/danryan-dave/charts/compare/common-0.11.0...common-0.12.0) (2026-08-14)
 
 
